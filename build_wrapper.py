@@ -8,7 +8,12 @@
 @Desc    :   编译脚本生成模块封装，提供查询和搜索功能
 '''
 import json
+import requests
+import hashlib
+from urllib.parse import urlparse
 from file import *
+from config import *
+
 
 # 初始化repo工具使用
 init_repo_script = """#!/bin/bash
@@ -43,6 +48,17 @@ make -j16
 """
 
 
+def get_sha256(file_path):
+    """
+    获取文件的sha256
+    """
+    sha256 = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            sha256.update(chunk)
+    return sha256.hexdigest()
+
+
 def get_build_models():
     """
     返回所有的设备型号，例如Pixel Pixel3
@@ -63,6 +79,11 @@ def get_all_branchs():
     # 由于爬虫提取了页面的所有内容，因此需要过滤出不能存在补丁日期的条目，这里就是我们要的结果
     # 每一个item都是一个dict 格式为  {"build_id": "Pie", "tag": "9", "version": "API \u7ea7\u522b 28", "supported_devices": "", "patch_date": ""}
     return [item for _, item in configs.items() if item['patch_date'] != ""]
+
+
+def get_codename(model):
+    config = json.loads(read_file("build_configs", BUILD_CONFIG))
+    return config[model]['code_name']
 
 
 def suggestion_build(model, android_version):
@@ -100,7 +121,54 @@ def suggestion_build(model, android_version):
     return suggestion_versions
 
 
-def generate_scripts(builds):
+def download_file(save, url):
+    # 发送HTTP GET请求获取文件
+    if os.path.isfile(save):
+        os.remove(save)
+    name = os.path.basename(save)
+    with requests.get(url, proxies=proxy, stream=True) as response:
+        if response.status_code == 200:
+            # 打开文件用于写入二进制数据
+            total = response.headers.get('content-length')
+
+            with open(save, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        print(
+                            f"正在下载{name}: {len(chunk)*100/int(total)}%", end="\r")
+                        file.write(chunk)
+            print(f"文件已成功下载到 {save}")
+        else:
+            print(f"下载失败，HTTP状态码: {response.status_code}")
+    # 校验一下md5的值
+
+
+def get_path(fname):
+    return os.getcwd()+os.sep+"build_aosp_scripts"+os.sep+fname
+
+
+def show_drivre(code_name, build_id, download=False):
+    lines = read_file("build_configs", BUILD_DRIVER)
+    # print("驱动信息如下:", lines)
+    drive_tag = code_name+build_id.lower()
+    drivers = json.loads(lines)
+    for key, driver in drivers.items():
+        if key == drive_tag:
+            for link in driver['downloads']:
+                print("驱动下载地址 :", link['link'],
+                      "\tsha256:", link['sha256_s'])
+                if download:
+                    parse = urlparse(link['link'])
+                    fname = os.path.basename(parse.path)
+                    save = get_path(fname)
+                    download_file(save, link['link'])
+                    # print("校验文件:", save)
+                    n = get_sha256(save)
+                    if n != link['sha256_s']:
+                        print("校验失败，文件可能被篡改")
+
+
+def generate_scripts(builds, code_name):
     print("生成的编译分支列表为: ")
     for i, build in enumerate(builds):
         msg = "\tbuildId: "+build['build_id'] + "\ttag: "+build['tag'] + "\t\tversion: " + \
@@ -146,5 +214,8 @@ def generate_scripts(builds):
     save_with_dir("build_aosp_scripts", REPOS_BUILD_SHELL, build_script_s)
     # print("编译脚本内容如下:\n"+build_script_s)
     print("生成脚本完成,文件保存在 build_aosp_scripts目录下")
+    # 输出对应的驱动信息
+    #
+    show_drivre(code_name, recommand['build_id'], True)
 
     #

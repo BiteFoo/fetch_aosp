@@ -101,8 +101,10 @@ class Parser(cmd2.Cmd):
         self.builds = suggestion_build(self.select_model, self.android_version)
         # 保存一下生成的配置信息
         save_file(BUILD_CACHE_CONFIG, json.dumps(self.builds))
+        code_name = get_codename(self.select_model)
+        print(f"设备的codename = {code_name}")
         # 记录好了这个机型信息，此时生成脚本
-        generate_scripts(self.builds)
+        generate_scripts(self.builds, code_name)
 
     # def do_select_device(self, arg):
     #     """
@@ -125,6 +127,40 @@ class Parser(cmd2.Cmd):
 
         pass
 
+    def do_download_driver(self, line):
+        """
+        下载驱动
+        这里我们需要获取 设备的Model 和aosp的分支
+        例如 
+        model = Pixel 3 这里要注意的是google提供的设备型号名称中Pixel3 实际是有空格的，因此我们要注意这个空格 
+        aosp_branch = android-10.0.0_r41
+        方便我们快速得到驱动信息
+        """
+        print("输入要下载的设备型号和源码分支，使用空格分开，例如Pixel 3,android-10.0.0_r41 进行下载驱动文件")
+        raw = input("请输入: ")
+        model, aosp_branch = raw.split(",")
+
+        build_id = ""
+        branches = get_all_branchs()
+        for branch in branches:
+            if branch['tag'] == aosp_branch:
+                build_id = branch['build_id']
+                break
+        if build_id == "":
+            print("没有找到源码相关的分支build id，尝试使用lsbranch查看")
+        else:
+            code_name = get_codename(model)
+        show_drivre(code_name, build_id, True)
+
+    def do_lsbranch(self, line):
+        """
+        列出所有的分支
+        """
+        branches = get_all_branchs()
+        for branch in branches:
+            print("branch:\t"+branch['tag'] +
+                  '\tbuild_id:\t' + branch['build_id'])
+
     def gen_script_info(self):
         """
         提示用户选择对应的设备，在推荐对应的源码分支最后生成下载脚本
@@ -140,7 +176,8 @@ class Parser(cmd2.Cmd):
 
     def do_sync_aosp_config(self, arg):
         """
-       同步google官方编译源码配置，默认存储在本地
+       同步googl
+       e官方编译源码配置，默认存储在本地
         """
         sync_aosp_build_info()
         print('同步配置成功')

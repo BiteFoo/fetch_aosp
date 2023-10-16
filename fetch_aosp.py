@@ -11,12 +11,7 @@ import json
 import requests
 from file import *
 from bs4 import BeautifulSoup
-
-
-proxy = {
-    "http": "http://127.0.0.1:7890",
-    "https": "http://127.0.0.1:7890"
-}
+from config import *
 
 
 def fetch_remote(url, proxy=None):

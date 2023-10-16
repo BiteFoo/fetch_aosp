@@ -1,1 +1,94 @@
-{"Pixel 6 Pro": {"code_name": "raven", "build_config": "aosp_raven-userdebug"}, "Pixel 6": {"code_name": "oriole", "build_config": "aosp_oriole-userdebug"}, "Pixel 5": {"code_name": "redfin", "build_config": "aosp_redfin-userdebug"}, "Pixel 4a": {"code_name": "sunfish", "build_config": "aosp_sunfish-userdebug"}, "Pixel 4 XL": {"code_name": "coral", "build_config": "aosp_coral-userdebug"}, "Pixel 4": {"code_name": "flame", "build_config": "aosp_flame-userdebug"}, "Pixel 3a": {"code_name": "sargo", "build_config": "aosp_sargo-userdebug"}, "Pixel 3 XL": {"code_name": "crosshatch", "build_config": "aosp_crosshatch-userdebug"}, "Pixel 3": {"code_name": "blueline", "build_config": "aosp_blueline-userdebug"}, "Pixel 2": {"code_name": "walleye", "build_config": "aosp_walleye-userdebug"}, "Pixel XL": {"code_name": "marlin", "build_config": "aosp_marlin-userdebug"}, "Pixel": {"code_name": "sailfish", "build_config": "aosp_sailfish-userdebug"}, "Nexus 6P": {"code_name": "angler", "build_config": "aosp_angler-userdebug"}, "Nexus 5X": {"code_name": "bullhead", "build_config": "aosp_bullhead-userdebug"}, "Nexus 6": {"code_name": "shamu", "build_config": "aosp_shamu-userdebug"}, "Nexus 9": {"code_name": "volantis (flounder)", "build_config": "aosp_flounder-userdebug"}, "Nexus 5 (GSM/LTE)": {"code_name": "hammerhead", "build_config": "aosp_hammerhead-userdebug"}, "Nexus 7 (WLAN)": {"code_name": "nakasi (grouper)", "build_config": "full_grouper-userdebug"}, "Nexus 10": {"code_name": "mantaray (manta)", "build_config": "full_manta-userdebug"}, "Nexus 4": {"code_name": "occam (mako)", "build_config": "full_mako-userdebug"}, "Galaxy Nexus (GSM/HSPA+)": {"code_name": "yakju (maguro)", "build_config": "full_maguro-userdebug"}, "Galaxy Nexus (Verizon)": {"code_name": "mysid (toro)", "build_config": "\u221aaosp_toro-userdebug"}, "Galaxy Nexus\uff08\u5b9e\u9a8c\u7248\uff09": {"code_name": "mysidspr (toroplus)", "build_config": "aosp_toroplus-userdebug"}}
+{
+    "Pixel 6 Pro": {
+        "code_name": "raven",
+        "build_config": "aosp_raven-userdebug"
+    },
+    "Pixel 6": {
+        "code_name": "oriole",
+        "build_config": "aosp_oriole-userdebug"
+    },
+    "Pixel 5": {
+        "code_name": "redfin",
+        "build_config": "aosp_redfin-userdebug"
+    },
+    "Pixel 4a": {
+        "code_name": "sunfish",
+        "build_config": "aosp_sunfish-userdebug"
+    },
+    "Pixel 4 XL": {
+        "code_name": "coral",
+        "build_config": "aosp_coral-userdebug"
+    },
+    "Pixel 4": {
+        "code_name": "flame",
+        "build_config": "aosp_flame-userdebug"
+    },
+    "Pixel 3a": {
+        "code_name": "sargo",
+        "build_config": "aosp_sargo-userdebug"
+    },
+    "Pixel 3 XL": {
+        "code_name": "crosshatch",
+        "build_config": "aosp_crosshatch-userdebug"
+    },
+    "Pixel 3": {
+        "code_name": "blueline",
+        "build_config": "aosp_blueline-userdebug"
+    },
+    "Pixel 2": {
+        "code_name": "walleye",
+        "build_config": "aosp_walleye-userdebug"
+    },
+    "Pixel XL": {
+        "code_name": "marlin",
+        "build_config": "aosp_marlin-userdebug"
+    },
+    "Pixel": {
+        "code_name": "sailfish",
+        "build_config": "aosp_sailfish-userdebug"
+    },
+    "Nexus 6P": {
+        "code_name": "angler",
+        "build_config": "aosp_angler-userdebug"
+    },
+    "Nexus 5X": {
+        "code_name": "bullhead",
+        "build_config": "aosp_bullhead-userdebug"
+    },
+    "Nexus 6": {
+        "code_name": "shamu",
+        "build_config": "aosp_shamu-userdebug"
+    },
+    "Nexus 9": {
+        "code_name": "volantis (flounder)",
+        "build_config": "aosp_flounder-userdebug"
+    },
+    "Nexus 5 (GSM/LTE)": {
+        "code_name": "hammerhead",
+        "build_config": "aosp_hammerhead-userdebug"
+    },
+    "Nexus 7 (WLAN)": {
+        "code_name": "nakasi (grouper)",
+        "build_config": "full_grouper-userdebug"
+    },
+    "Nexus 10": {
+        "code_name": "mantaray (manta)",
+        "build_config": "full_manta-userdebug"
+    },
+    "Nexus 4": {
+        "code_name": "occam (mako)",
+        "build_config": "full_mako-userdebug"
+    },
+    "Galaxy Nexus (GSM/HSPA+)": {
+        "code_name": "yakju (maguro)",
+        "build_config": "full_maguro-userdebug"
+    },
+    "Galaxy Nexus (Verizon)": {
+        "code_name": "mysid (toro)",
+        "build_config": "\u221aaosp_toro-userdebug"
+    },
+    "Galaxy Nexus\uff08\u5b9e\u9a8c\u7248\uff09": {
+        "code_name": "mysidspr (toroplus)",
+        "build_config": "aosp_toroplus-userdebug"
+    }
+}
