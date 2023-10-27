@@ -22,8 +22,8 @@ def fetch_remote(url, proxy=None):
         return requests.get(url)
 
 
-def fetch_build_config():
-    if check_file_exists("build_configs", BUILD_CONFIG):
+def fetch_build_config(force: bool):
+    if not force and check_file_exists("build_configs", BUILD_CONFIG):
         print("build_config.json exists")
         return
     url = "https://source.android.com/docs/setup/build/running?hl=zh-cn#selecting-device-build"
@@ -66,9 +66,9 @@ def fetch_build_config():
     save_with_dir("build_configs", BUILD_CONFIG, json.dumps(device_config))
 
 
-def fetch_build_branch():
+def fetch_build_branch(force: bool):
 
-    if check_file_exists("build_configs", BUILD_BRANCH):
+    if not force and check_file_exists("build_configs", BUILD_BRANCH):
         print("build branch 文件已存在")
         return
     # 下载设备分支版本
@@ -143,12 +143,12 @@ def parse_driver_html(html_content):
     save_with_dir("build_configs", BUILD_DRIVER, json.dumps(driver_map))
 
 
-def fetch_driver():
+def fetch_driver(force: bool):
     # 根据设备的名称和源码的id进行下载驱动文件
     # https://dl.google.com/dl/android/aosp/google_devices-panther-td1a.221105.001.a1-4ba7e08e.tgz?hl=zh-cn
     # https://dl.google.com/dl/android/aosp/google_devices-panther-tq1a.221205.011-229ee18c.tgz?hl=zh-cn
     # 下载驱动
-    if check_file_exists("build_configs", BUILD_DRIVER):
+    if not force and check_file_exists("build_configs", BUILD_DRIVER):
         # 已经同步过文件
         # 否则我们删除这个配置即可重新同步
         return
@@ -160,9 +160,9 @@ def fetch_driver():
     print("同步驱动完成")
 
 
-def sync_aosp_build_info():
+def sync_aosp_build_info(force=False):
     make_sure_path_exists("build_configs")
-    fetch_build_config()
-    fetch_build_branch()
-    fetch_driver()
+    fetch_build_config(force)
+    fetch_build_branch(force)
+    fetch_driver(force)
     print("同步所有支持设备分支信息完成")

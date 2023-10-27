@@ -165,7 +165,21 @@ def show_drivre(code_name, build_id, download=False):
                     # print("校验文件:", save)
                     n = get_sha256(save)
                     if n != link['sha256_s']:
-                        print("校验失败，文件可能被篡改")
+                        print("校验失败，文件可能下载不全的原因是网络可能链接出现问题，可以使用 getfile 命令进行下载")
+
+
+def getfile(url, sig: str = ""):
+    # 下载文件使用
+    parse = urlparse(url)
+    fname = os.path.basename(parse.path)
+    save = get_path(fname)
+    download_file(save, url)
+    n = get_sha256(save)
+    print(f"下载文件完成：{save} sha256: {sig} new_sha256: {n}")
+    if sig != "" and n != sig:
+        print("校验失败，文件可能下载不全的原因是网络可能链接出现问题，可以使用 getfile 命令进行下载")
+    else:
+        print("下载成功")
 
 
 def generate_scripts(builds, code_name):

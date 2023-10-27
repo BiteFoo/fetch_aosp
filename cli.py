@@ -177,10 +177,30 @@ class Parser(cmd2.Cmd):
     def do_sync_aosp_config(self, arg):
         """
        同步googl
-       e官方编译源码配置，默认存储在本地
+       官方编译源码配置，默认存储在本地
+       使用缓存： sync_aosp_config 如果已经存在配置，则使用默认，否则会同步
+       强制同步：sync_aosp_config force 会重新下载编译源码配置信息
         """
-        sync_aosp_build_info()
+        force = False
+        if arg != "":
+            force = True if arg == "force" else False
+        sync_aosp_build_info(force)
         print('同步配置成功')
+
+    def do_getfile(self, line):
+        """
+        下载指定url文件，通常用来下载driver文件
+        使用 getfile url sha256  
+        getfile url [sha256]
+        """
+        tmp = line.split(" ")
+        url = ""
+        sig = ""
+        if len(tmp) == 1:
+            url = tmp[0]
+        else:
+            url, sig = tmp
+        getfile(url, sig)
 
     def postloop(self):
         """
