@@ -14,6 +14,7 @@ import os
 BUILD_CONFIG = "build_config.json"
 BUILD_BRANCH = "build_branch.json"
 BUILD_DRIVER = "build_driver.json"
+PIXEL_IMAGES="pixel_images.json"
 # 每次重新使用suggest生成的配置信息
 BUILD_CACHE_CONFIG = "build.pro"
 # 编译shell脚本名称

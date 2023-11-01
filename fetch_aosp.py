@@ -69,7 +69,7 @@ def fetch_build_config(force: bool):
 def fetch_build_branch(force: bool):
 
     if not force and check_file_exists("build_configs", BUILD_BRANCH):
-        print("build branch 文件已存在")
+        # print("build branch 文件已存在")
         return
     # 下载设备分支版本
     url = "https://source.android.com/docs/setup/about/build-numbers?hl=zh-cn"
@@ -160,9 +160,83 @@ def fetch_driver(force: bool):
     print("同步驱动完成")
 
 
+def fetch_pixel_images(force=False):
+    """_summary_
+    下载镜像文件
+    ov: 下载的系统版本，例如13.0.0
+    build_id: 配置获取到的构建本id，例如13.0.0的build_id TQ3C.230605.010.C1
+    model: 手机的型号，例如pixel6
+    """
+    url = "https://developers.google.com/android/images?hl=zh-cn"
+    if not force and    check_file_exists("build_configs", PIXEL_IMAGES):
+        # 已经同步过文件
+        # 否则我们删除这个配置即可重新同步
+        return
+    # google这个页面的爬取太麻烦，我决定直接右键查看源码，复制到本地来解析算了，避免掉头发
+    # res = fetch_remote(url, proxy)
+    # 使用下载的html文档是不完整的，这里考虑手动下载这个html文档
+    # if res.status_code != 200:
+    #     raise Exception("fetch pixel images failed")
+    # with codecs.open("images.html","w",encoding="utf-8") as fp:
+    #     fp.write(res.text)
+    with codecs.open("images.html","r",encoding="utf-8") as fp:
+        app = BeautifulSoup(fp.read(), "html.parser")
+        list_h2 = app.find_all("h2")
+        images_info =  []
+        # 由于我们需要读取到镜像描述的信息，因此这里我们考虑直接读取h2的信息，然后再解析它的兄弟节点即可
+        for h2 in list_h2:
+            table = h2.find_next_sibling("table")
+            if table is None:
+                continue
+            data_text = h2.text
+            trs = table.find_all("tr")
+            for tr in trs:
+                item ={}
+                # print(tr.get("id"))
+                tds = tr.find_all("td")
+                if tds is None or  len(tds) <3:continue
+                # for td in tds:
+                #     print("-< td = ",td)
+                version = tds[0].text
+                link_indx = 2 if len(tds) ==4 else 1
+                link = tds[link_indx].find("a").get("href")
+                label = tds[link_indx].find("a").get("data-label")
+                sha256  = tds[link_indx+1].text
+                # 解析android版本和build_id
+                sp = "（"
+                vtmp = version.split(sp) # 这里是中文的（分隔
+                rp = "）"
+                if len(vtmp) ==1:
+                    vtmp = version.split("(")
+                    rp =")"
+                # 读取版本
+                android_version =  vtmp[0].strip()
+                text = vtmp[1].strip().replace(rp,"")
+                if "，"in text:
+                    index = text.find("，")
+                    build_id = text[:index] # 保持后续的内容
+                    date_desc =  text[index+1:]#时间信息描述
+                else:
+                    build_id = text
+                    date_desc = ""
+                # if "仅适用于" in build_id:
+                #     print("-> 发现异常Build_id = ",text)
+                    
+                item["version"] =version
+                item["link"] = link
+                item["android_version"]= android_version
+                item["build_id"] = build_id
+                item["date_desc"]=date_desc
+                item["sha256"]=sha256
+                item["label"]=label
+                item["description"] = data_text
+                images_info.append(item)
+        save_with_dir("build_configs", PIXEL_IMAGES, json.dumps(images_info))
+    
 def sync_aosp_build_info(force=False):
     make_sure_path_exists("build_configs")
     fetch_build_config(force)
     fetch_build_branch(force)
     fetch_driver(force)
+    fetch_pixel_images(force )
     print("同步所有支持设备分支信息完成")

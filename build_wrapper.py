@@ -7,9 +7,11 @@
 @License :   (C)Copyright 2020-2021,Loopher
 @Desc    :   编译脚本生成模块封装，提供查询和搜索功能
 '''
+import progressbar
 import json
 import requests
 import hashlib
+import sys
 from urllib.parse import urlparse
 from file import *
 from config import *
@@ -125,19 +127,22 @@ def download_file(save, url):
     # 发送HTTP GET请求获取文件
     if os.path.isfile(save):
         os.remove(save)
-    name = os.path.basename(save)
+    # name = os.path.basename(save)
     with requests.get(url, proxies=proxy, stream=True) as response:
         if response.status_code == 200:
-            # 打开文件用于写入二进制数据
             total = response.headers.get('content-length')
-
+            widgets = ['Downloading: ', progressbar.Percentage(), ' ',
+            progressbar.Bar(marker='#', left='[', right=']'),
+            ' ', progressbar.ETA(), ' ', progressbar.FileTransferSpeed()]
+            pbar = progressbar.ProgressBar(widgets=widgets, maxval=int(total)).start()
+                # 打开文件用于写入二进制数据
             with open(save, 'wb') as file:
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
-                        print(
-                            f"正在下载{name}: {len(chunk)*100/int(total)}%", end="\r")
                         file.write(chunk)
-            print(f"文件已成功下载到 {save}")
+                        file.flush()
+                        pbar.update(len(chunk) +1)
+            pbar.finish()
         else:
             print(f"下载失败，HTTP状态码: {response.status_code}")
     # 校验一下md5的值
@@ -233,3 +238,42 @@ def generate_scripts(builds, code_name):
     show_drivre(code_name, recommand['build_id'], True)
 
     #
+def get_images(android_version,model,build_id):
+    """_summary_
+
+    Args:
+        android_version (str): android版本，例如10
+        build_id (str): 编译id 可能为空
+        model (str): 设备型号
+    """
+    image_infos = json.loads(read_file("build_configs",PIXEL_IMAGES))
+    # 列举出符合的设备列表，在根据os进行输出
+    matched = [item for item in image_infos if model in  item['description'] and android_version in item['android_version']]
+    if build_id != "":
+        matched = [item for item in matched if build_id  ==  item['build_id']]
+    if len(matched) == 0:
+        print(f"未找到对应的设备信息 {model}")
+        return 
+    for i,m in enumerate(matched):
+        print("[%d]: %s\t\tbuild_id: %s"%(i,m['description'],m['build_id']))
+    select = input("请输入要选择下载的镜像文件:")
+    select = matched[int(select)]
+    print("开始下载进行文件: ",select['description'])
+    print("版本信息: ",select['version']),
+    print("下载链接: ",select['link'])
+    print("sha256: ",select['sha256'])
+    print("")
+    make_sure_path_exists("downloads")
+    parse = urlparse(select['link'])
+    fname = os.path.basename(parse.path)
+    save = os.getcwd()+os.sep+"downloads"+os.sep+fname
+    download_file(save,select['link'])
+    n = get_sha256(save)
+    if n != select['sha256']:
+        print("下载文件失败，请使用getfile命令重试")
+    else:
+        print("文件下载完成，保存在 "+save)
+        
+        
+    
+    

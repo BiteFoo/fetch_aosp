@@ -160,20 +160,7 @@ class Parser(cmd2.Cmd):
         for branch in branches:
             print("branch:\t"+branch['tag'] +
                   '\tbuild_id:\t' + branch['build_id'])
-
-    def gen_script_info(self):
-        """
-        提示用户选择对应的设备，在推荐对应的源码分支最后生成下载脚本
-        """
-        pass
-
-    def do_gen_script(self):
-        if self.select_device_model == -1:
-            print('请先选择设备')
-        else:
-            print('开始生成脚本')
-            print('请输入要生成的脚本名称，默认是fetch_aosp.sh')
-
+    
     def do_sync_aosp_config(self, arg):
         """
        同步googl
@@ -201,7 +188,67 @@ class Parser(cmd2.Cmd):
         else:
             url, sig = tmp
         getfile(url, sig)
+    def do_get_image(self,line):
+        """
+        下载镜像
+        get_image android_version,model,[build_id])
+        android_version: android的版本，例如10 直接输入10即可
+        model:手机信号，例如pixel 3 注意这个要用空格隔开
+        
+        """
+        ins  = line.split(",")
+        if len(ins) == 2:
+            android_version = ins[0]
+            model = ins[1]
+            build_id = ""
+        elif len(ins) == 3:
+            android_version = ins[0]
+            model = ins[1]
+            build_id = ins[2]
+        else:
+            print("参数错误")
+        get_images(android_version,model,build_id)
+    def do_build_aosp_help(self,line):
+        """_summary_
 
+        编译AOSP帮助命令提示
+        """
+        text = """
+        1、执行build_aosp_scripts下的脚本，这些脚本分别有
+        repo_init.sh 初始化repo环境
+        repo_sync_aosp.sh  执行代码下载
+        repo_build.sh 执行编译
+        如果有需要可以调整脚本内的参数，这些功能我都已经测试过没问题
+        2、编译完成后，执行刷机命令为
+        export ANDROID_PRODUCT_OUT=/path/to/aosp/out/target/product/phone_model
+        如果是pixel3 android10 则为
+        export ANDROID_PRODUCT_OUT=/path/to/aosp/out/target/product/blueline/
+        执行刷机
+        adb reboot bootloader
+        fastboot flashall -w 
+        如果想保留手机的数据，可以不加-w选项
+        """
+        print(text)
+ 
+    def do_install_magisk_help(self,line):
+        text ="""FLASHING MAGISK 
+
+        安装magisk帮助
+        首先我们将编译出来的aosp中的boot.img文件push到手机内，执行
+        adb push boot.img /storage/emulated/0/Downloads
+        然后使用magisk进行patch
+        最后提取出来patch的文件，一般会带有关magisk_xxx.img
+        接着尝试刷入测试，
+        1、先尝试刷入启动能否启动
+        adb reboot bootloader
+        fastboot boot magisk_xxx.img
+        如果确认没问题，再执行刷入
+        adb reboot bootloader
+        fastboot flash boot magisk_xx.img
+        """
+        print(text)
+        
+        
     def postloop(self):
         """
         在命令行交互式应用退出前执行的函数
