@@ -60,6 +60,8 @@ python cli.py
 ![shell_script](./img/shell_script.png)
 由于是在国内同步，则需要使用代理源，这里使用的是清华大学的，也可以使用其他的源，最终结果如下
 ![repo](./img/repo.png)
+## get_image
+增加下载设备镜像，方便刷入官方指定镜像包，使用`get_image` 命令下载，具体使用`help get_image`查看使用方式
 
 ## 说明
 由于我已经存了一份config,可以不需要一直保持同步，如果有需要再重新同步即可。我们可以直接执行生成配置命令，然后再执行相关操作。
