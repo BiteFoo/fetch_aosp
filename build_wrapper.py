@@ -24,6 +24,7 @@ mkdir ~/bin
 PATH=~/bin:$PATH
 curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo -o repo
 chmod +x repo
+# BUILD_ID
 """
 
 # 同步分支脚本 使用清华源生成
@@ -218,6 +219,7 @@ def generate_scripts(builds, code_name):
     make_sure_path_exists("build_aosp_scripts")
 
     init_repo_script_s = init_repo_script.format(branch=recommand['tag'])
+    init_repo_script_s = init_repo_script_s.replace("BUILD_ID", recommand['build_id'])
 
     save_with_dir("build_aosp_scripts", REPO_INIT_SHELL, init_repo_script_s)
     # print("初始化源码repo脚本内容如下:\n"+init_repo_script_s)
