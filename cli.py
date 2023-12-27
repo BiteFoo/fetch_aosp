@@ -1,11 +1,11 @@
 # coding:utf8
 '''
-@File    :   cli.py
-@Author  :   Loopher 
-@Version :   1.0
-@date    :    2023/10/12 17:28:39
-@License :   (C)Copyright 2020-2021,Loopher
-@Desc    :   cli应用 交互式下载源码，同时支持手动同步官方配置文档数据，
+@File    :  cli.py
+@Author  :  Loopher 
+@Version :  1.0
+@date    :  2023/10/12 17:28:39
+@License :  (C)Copyright 2020-2021,Loopher
+@Desc    :  cli应用 交互式下载源码，同时支持手动同步官方配置文档数据，
             程序支持推荐下载对应的设备分支执行和驱动文件，避免繁琐的去查阅官方文档，当然还是推荐去阅读官方文档        
 '''
 
@@ -127,6 +127,10 @@ class Parser(cmd2.Cmd):
 
         pass
 
+    def do_clear(self,line):
+        plt = sys.platform.lower()
+        cmd = "clear\n" if plt!="win32" else "cls"
+        subprocess.Popen(cmd,shell=True,close_fds = True)
     def do_download_driver(self, line):
         """
         下载驱动
