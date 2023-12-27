@@ -1,5 +1,5 @@
 beautifulsoup4==4.12.2
 click==8.0.3
 cmd2==2.3.3
-progressbar==2.4
+progressbar==2.5
 Requests==2.31.0
